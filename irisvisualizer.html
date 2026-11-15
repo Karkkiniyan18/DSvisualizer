@@ -1,0 +1,134 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>irisvisualizer</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#07070f;--cd:rgba(255,255,255,.06);--bd:rgba(255,255,255,.13);--tx:#eef0ff;--mut:#9aa0c3;--a:#8b5cf6;--b:#22d3ee;--c:#f472b6;--ok:#34d399;--bad:#fb7185;--wn:#fbbf24;--nf:#1c1b3a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:light){:root:not([data-theme=dark]){color-scheme:light;--bg:#f3f2ff;--cd:rgba(255,255,255,.72);--bd:rgba(80,70,160,.2);--tx:#1b1840;--mut:#5d5a85;--nf:#fff;--wn:#d99a00}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 Sora,system-ui,sans-serif;min-height:100vh}
+.aur{position:fixed;inset:0;z-index:-1;background:radial-gradient(40% 40% at 15% 10%,rgba(139,92,246,.35),transparent),radial-gradient(35% 40% at 90% 20%,rgba(34,211,238,.25),transparent),radial-gradient(40% 40% at 60% 100%,rgba(244,114,182,.22),transparent)}
+header{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:16px 22px}
+.logo{display:flex;gap:10px;align-items:center;font-size:24px;font-weight:700;letter-spacing:-.5px}.logo span{background:linear-gradient(90deg,var(--a),var(--b),var(--c));-webkit-background-clip:text;background-clip:text;color:transparent}
+nav{display:flex;gap:6px;padding:5px;border-radius:16px;background:var(--cd);border:1px solid var(--bd);backdrop-filter:blur(14px)}
+button,select,input{font:inherit;color:var(--tx)}
+nav button{border:0;background:none;padding:8px 16px;border-radius:12px;cursor:pointer;color:var(--mut)}nav button.on{background:linear-gradient(135deg,var(--a),var(--b));color:#fff}
+main{padding:0 22px 30px;max-width:1280px;margin:auto}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px}@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--cd);border:1px solid var(--bd);border-radius:20px;padding:14px;backdrop-filter:blur(16px);margin-bottom:14px}
+h3{margin:0 0 10px;font-size:15px}.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.b{border:1px solid var(--bd);background:var(--cd);border-radius:12px;padding:7px 12px;cursor:pointer;transition:.15s}.b:hover{border-color:var(--b)}.b:focus-visible,select:focus-visible,input:focus-visible,nav button:focus-visible{outline:2px solid var(--b);outline-offset:2px}
+.b.on{background:linear-gradient(135deg,var(--a),var(--c));border-color:transparent;color:#fff}.b.go{background:linear-gradient(135deg,var(--b),var(--a));color:#fff;border:0;font-weight:600}.b.rm{color:var(--bad)}
+input,select{background:var(--nf);border:1px solid var(--bd);border-radius:10px;padding:7px 10px}input[type=number],input[type=text]{width:90px}input[type=text]{width:150px}
+label{color:var(--mut);display:flex;gap:6px;align-items:center}
+svg{display:block;width:100%;height:auto;touch-action:none;border-radius:14px;background:rgba(127,127,200,.07)}
+.hint{color:var(--mut);margin-top:8px;font-size:13px}
+.ed{stroke:var(--mut);stroke-width:2.5;fill:none;opacity:.75}.ed.tree{stroke:var(--ok);stroke-width:4;opacity:1}.ed.cur{stroke:var(--wn);stroke-width:4;opacity:1}.ed.bad{stroke:var(--bad);stroke-width:4;opacity:1}
+.ar{fill:var(--mut)}.ar.tree{fill:var(--ok)}.ar.cur{fill:var(--wn)}.ar.bad{fill:var(--bad)}
+.wl{fill:var(--tx);font-size:13px;font-weight:600;text-anchor:middle;paint-order:stroke;stroke:var(--bg);stroke-width:4px}
+.nd circle{fill:var(--nf);stroke:var(--a);stroke-width:2.5;transition:.25s}.nd text{fill:var(--tx);font-weight:700;text-anchor:middle;dominant-baseline:central;pointer-events:none;font-size:15px}
+.nd.front circle,.nd.pick circle{stroke:var(--b);fill:rgba(34,211,238,.28)}.nd.cur circle{stroke:var(--wn);fill:rgba(251,191,36,.35)}.nd.vis circle{stroke:var(--ok);fill:rgba(52,211,153,.3)}.nd.art circle{stroke:var(--bad);fill:rgba(251,113,133,.4)}
+.lb{fill:var(--b);font-size:12px;font-weight:600;text-anchor:middle}
+.ctl{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:10px}
+#log,#ts2{max-height:190px;overflow:auto;font-size:13px}#log div{padding:4px 8px;border-radius:8px;color:var(--mut)}#log div:last-child{background:rgba(139,92,246,.2);color:var(--tx)}
+pre{margin:0;font:12px/1.6 ui-monospace,Menlo,monospace;color:var(--tx);white-space:pre-wrap}
+table{border-collapse:collapse;font-size:12px}td,th{border:1px solid var(--bd);padding:2px 7px;text-align:center}th{color:var(--b)}.sc{overflow:auto}
+.tn{fill:var(--nf);stroke:var(--a);stroke-width:2}.tn.hp{stroke:var(--wn);stroke-width:3}.kc{fill:none;stroke:var(--bd)}.kc.hk{fill:rgba(52,211,153,.45)}.kt{fill:var(--tx);font-size:13px;font-weight:600;text-anchor:middle}.kt.ik{fill:var(--mut)}.tl{stroke:var(--mut);stroke-width:1.6;fill:none}.lk{stroke:var(--b);stroke-width:2;stroke-dasharray:5 4}
+.msg{margin:10px 0 0;padding:9px 12px;border-radius:12px;background:rgba(139,92,246,.18)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body><div class="aur"></div>
+<header><div class="logo"><svg width="34" height="34" viewBox="0 0 40 40" style="background:none;width:34px"><defs><linearGradient id="lg"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><circle cx="20" cy="20" r="17" fill="none" stroke="url(#lg)" stroke-width="3"/><circle cx="20" cy="20" r="8" fill="#f472b6"/><circle cx="20" cy="20" r="3" fill="#07070f"/></svg><span>irisvisualizer</span></div>
+<nav id="nav"><button class="on" data-t="g">Graphs</button><button data-t="b">B-Tree</button><button data-t="p">B+ Tree</button></nav></header>
+<main>
+<section id="g"><div class="grid"><div>
+<div class="card"><div class="bar" id="tools"><button class="b on" data-m="node">Add vertex</button><button class="b" data-m="edge">Add edge</button><button class="b" data-m="edit">Edit weight</button><button class="b" data-m="move">Move</button><button class="b rm" data-m="del">Delete</button>
+<label>Weight <input type="number" id="w" value="5" min="1"></label><label><input type="checkbox" id="dir">Directed</label><label><input type="checkbox" id="wt" checked>Weighted</label></div>
+<svg id="sv" viewBox="0 0 760 460" role="img" aria-label="Graph canvas"></svg><div class="hint" id="hint"></div></div>
+<div class="card"><h3>Load an example</h3><div class="bar"><button class="b" data-s="w">Weighted graph</button><button class="b" data-s="d">DAG</button><button class="b" data-s="e">Bow-tie (Euler and cut vertex)</button><button class="b rm" data-s="x">Clear all</button></div></div></div>
+<div><div class="card"><h3>Run an algorithm</h3><div class="bar"><select id="alg"><option value="bfs">Breadth-first traversal</option><option value="dfs">Depth-first traversal</option><option value="dij">Dijkstra’s shortest paths</option><option value="prim">Prim’s MST</option><option value="kru">Kruskal’s MST</option><option value="topo">Topological sort</option><option value="bic">Bi-connectivity</option><option value="eul">Euler circuit</option></select>
+<label>Start <select id="st"></select></label><button class="b go" id="run">Run</button></div>
+<div class="ctl"><button class="b" id="prev" aria-label="Previous step">◀</button><button class="b" id="play" aria-label="Play or pause">▶</button><button class="b" id="next" aria-label="Next step">▶|</button><label>Speed <input type="range" id="sp" min="1" max="10" value="5"></label><span id="stp" class="hint"></span></div></div>
+<div class="card"><h3>Step log</h3><div id="log"></div></div>
+<div class="card"><h3>Representation</h3><pre id="al"></pre><div class="sc" id="mx" style="margin-top:8px"></div></div></div></div></section>
+<section id="t" hidden><div class="grid"><div class="card"><div class="sc"><svg id="ts" viewBox="0 0 600 200" style="min-height:220px"></svg></div><div class="msg" id="tm">Insert some keys to begin.</div></div>
+<div><div class="card"><h3 id="tt">B-Tree</h3><div class="bar"><label>Order <select id="ord"><option>3</option><option selected>4</option><option>5</option><option>6</option></select></label></div>
+<div class="bar"><input type="text" id="kv" placeholder="e.g. 10, 20, 5"><button class="b go" id="ti">Insert</button><button class="b" id="tsr">Search</button><button class="b rm" id="td">Delete</button></div>
+<div class="bar"><input type="number" id="uo" placeholder="old"><input type="number" id="un" placeholder="new"><button class="b" id="tu">Update</button></div>
+<div class="bar"><button class="b" id="tr">Add 8 random</button><button class="b rm" id="tc">Clear</button></div><div class="hint" id="tst"></div></div>
+<div class="card"><h3>How it works</h3><div class="hint" id="how"></div></div></div></div></section></main>
+<script>
+const $=s=>document.querySelector(s),W=760,H=460,sv=$('#sv');
+let G={nodes:[],edges:[],dir:false,wt:true},mode='node',pick=null,drag=null,steps=[],si=-1,tm=null,ST={n:{},e:{},l:{}};
+const HINT={node:'Click empty space to add a vertex.',edge:'Click two vertices to connect them (or update an existing edge).',edit:'Click an edge to set its weight to the value above.',move:'Drag vertices to rearrange them.',del:'Click a vertex or an edge to remove it.'};
+const ew=e=>G.wt?e.w:1,wv=()=>Math.max(1,parseInt($('#w').value)||1);
+const nid=()=>{for(let i=0;i<26;i++){const c=String.fromCharCode(65+i);if(!G.nodes.some(n=>n.id==c))return c}return'N'+G.nodes.length};
+const stop=()=>{clearInterval(tm);tm=null;$('#play').textContent='▶'};
+function mut(){stop();steps=[];si=-1;ST={n:{},e:{},l:{}};$('#log').innerHTML='';$('#stp').textContent='';draw();repr();fillSt()}
+function fillSt(){const s=$('#st'),v=s.value;s.innerHTML=G.nodes.map(n=>`<option>${n.id}</option>`).join('');if(G.nodes.some(n=>n.id==v))s.value=v}
+const nm=id=>G.nodes.find(n=>n.id==id);
+function draw(){let h='';G.edges.forEach((e,i)=>{const a=nm(e.u),b=nm(e.v),dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L,x1=a.x+ux*20,y1=a.y+uy*20,x2=b.x-ux*20,y2=b.y-uy*20,c=ST.e[i]||'';
+h+=`<line class="ed ${c}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/><line data-e="${i}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="transparent" stroke-width="18" style="pointer-events:stroke"/>`;
+if(G.dir)h+=`<polygon class="ar ${c}" points="${x2},${y2} ${x2-ux*11-uy*5},${y2-uy*11+ux*5} ${x2-ux*11+uy*5},${y2-uy*11-ux*5}"/>`;
+if(G.wt)h+=`<text class="wl" x="${(a.x+b.x)/2-uy*12}" y="${(a.y+b.y)/2+ux*12+4}">${e.w}</text>`});
+G.nodes.forEach(n=>{h+=`<g class="nd ${ST.n[n.id]||''} ${pick==n.id?'pick':''}" data-n="${n.id}"><circle cx="${n.x}" cy="${n.y}" r="20"/><text x="${n.x}" y="${n.y}">${n.id}</text>${ST.l[n.id]!=null?`<text class="lb" x="${n.x}" y="${n.y+37}" style="dominant-baseline:auto">${ST.l[n.id]}</text>`:''}</g>`});sv.innerHTML=h}
+function repr(){const A=adj(),ids=G.nodes.map(n=>n.id);$('#al').textContent=ids.length?ids.map(i=>i+' → '+(A[i].map(x=>x.to+(G.wt?`(${x.w})`:'')).join(', ')||'–')).join('\n'):'Add vertices to see the adjacency list and matrix.';
+let t='<table><tr><th></th>'+ids.map(i=>`<th>${i}</th>`).join('')+'</tr>';ids.forEach(r=>{t+=`<tr><th>${r}</th>`+ids.map(c=>{const x=A[r].find(y=>y.to==c);return`<td>${x?x.w:0}</td>`}).join('')+'</tr>'});$('#mx').innerHTML=ids.length?t+'</table>':''}
+const adj=u=>{const A={};G.nodes.forEach(n=>A[n.id]=[]);G.edges.forEach((e,i)=>{A[e.u].push({to:e.v,w:ew(e),i});if(u||!G.dir)A[e.v].push({to:e.u,w:ew(e),i})});return A};
+const pt=ev=>{const r=sv.getBoundingClientRect();return{x:Math.min(W-20,Math.max(20,(ev.clientX-r.left)*W/r.width)),y:Math.min(H-20,Math.max(20,(ev.clientY-r.top)*H/r.height))}};
+sv.addEventListener('pointerdown',ev=>{const n=ev.target.closest('[data-n]')?.dataset.n,e=ev.target.closest('[data-e]')?.dataset.e,p=pt(ev);
+if(mode=='node'&&!n&&e==null){if(G.nodes.length<26){G.nodes.push({id:nid(),x:p.x,y:p.y});mut()}}
+else if(mode=='move'&&n)drag=n;
+else if(mode=='del'){if(n){G.nodes=G.nodes.filter(x=>x.id!=n);G.edges=G.edges.filter(x=>x.u!=n&&x.v!=n);mut()}else if(e!=null){G.edges.splice(+e,1);mut()}}
+else if(mode=='edit'&&e!=null){G.edges[+e].w=wv();mut()}
+else if(mode=='edge'&&n){if(!pick){pick=n;draw()}else if(pick==n){pick=null;draw()}else{const u=pick,ex=G.edges.find(x=>(x.u==u&&x.v==n)||(!G.dir&&x.u==n&&x.v==u));ex?ex.w=wv():G.edges.push({u,v:n,w:wv()});pick=null;mut()}}});
+addEventListener('pointermove',ev=>{if(drag){const n=nm(drag),p=pt(ev);n.x=p.x;n.y=p.y;draw()}});addEventListener('pointerup',()=>{if(drag){drag=null;repr()}});
+$('#tools').addEventListener('click',ev=>{const m=ev.target.dataset.m;if(m){mode=m;pick=null;document.querySelectorAll('#tools [data-m]').forEach(b=>b.classList.toggle('on',b.dataset.m==m));$('#hint').textContent=HINT[m];draw()}});$('#hint').textContent=HINT.node;
+$('#dir').onchange=e=>{G.dir=e.target.checked;mut()};$('#wt').onchange=e=>{G.wt=e.target.checked;mut()};
+const SM={w:{n:'A120,110 B300,60 C480,110 D200,260 E380,250 F620,230 G300,400',e:'AB4 AD3 BC5 BE2 CF3 DE4 DG6 EF6 EG5',d:0},d:{n:'A100,230 B260,110 C260,350 D430,230 E430,400 F640,230',e:'AB1 AC1 BD1 CD1 CE1 DF1 EF1',d:1},e:{n:'A150,110 B150,350 C380,230 D610,110 E610,350',e:'AB3 BC4 CA2 CD5 DE3 EC6',d:0}};
+document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{const s=SM[b.dataset.s];G.nodes=[];G.edges=[];if(s){s.n.split(' ').forEach(t=>{const[x,y]=t.slice(1).split(',');G.nodes.push({id:t[0],x:+x,y:+y})});s.e.split(' ').forEach(t=>G.edges.push({u:t[0],v:t[1],w:+t.slice(2)}));G.dir=!!s.d;$('#dir').checked=G.dir}mut()});
+const snap=m=>steps.push({n:{...ST.n},e:{...ST.e},l:{...ST.l},m});
+const ALG={
+bfs(s){const A=adj(),q=[s],seen={[s]:1},o=[];ST.n[s]='front';snap(`Start: enqueue ${s}`);while(q.length){const u=q.shift();o.push(u);ST.n[u]='cur';snap(`Dequeue ${u} and look at its neighbours`);for(const{to,i}of A[u])if(!seen[to]){seen[to]=1;q.push(to);ST.n[to]='front';ST.e[i]='tree';snap(`Discover ${to} through ${u}. Queue: [${q}]`)}ST.n[u]='vis';snap(`${u} finished`)}snap(`BFS order: ${o.join(' → ')}`)},
+dfs(s){const A=adj(),seen={},o=[];const d=u=>{seen[u]=1;o.push(u);ST.n[u]='cur';snap(`Visit ${u}`);for(const{to,i}of A[u])if(!seen[to]){ST.e[i]='tree';d(to);ST.n[u]='cur';snap(`Backtrack to ${u}`)}ST.n[u]='vis';snap(`${u} finished`)};d(s);snap(`DFS order: ${o.join(' → ')}`)},
+dij(s){const A=adj(),D={},pe={},done={};G.nodes.forEach(n=>{D[n.id]=1/0;ST.l[n.id]='∞'});D[s]=0;ST.l[s]=0;snap(`Distance to ${s} is 0, all others ∞`);
+for(;;){let u=null;for(const k in D)if(!done[k]&&D[k]<1/0&&(u==null||D[k]<D[u]))u=k;if(u==null)break;done[u]=1;ST.n[u]='cur';snap(`Pick the closest unfinished vertex: ${u} (${D[u]})`);
+for(const{to,w,i}of A[u])if(!done[to]&&D[u]+w<D[to]){D[to]=D[u]+w;ST.l[to]=D[to];if(pe[to]!=null)delete ST.e[pe[to]];pe[to]=i;ST.e[i]='tree';snap(`Relax ${u}→${to}: new distance ${D[to]}`)}ST.n[u]='vis';snap(`${u} is final`)}snap('Done. Green edges form the shortest-path tree.')},
+prim(s){const A=adj(1),T={[s]:1};let tot=0;ST.n[s]='vis';snap(`Start the tree at ${s}`);for(;;){let b=null;const c=[];G.edges.forEach((e,i)=>{if(!!T[e.u]!=!!T[e.v]){c.push(i);if(b==null||ew(e)<ew(G.edges[b]))b=i}});if(b==null)break;c.forEach(i=>ST.e[i]='cur');snap(`Edges leaving the tree: ${c.map(i=>G.edges[i].u+G.edges[i].v).join(', ')}`);c.forEach(i=>delete ST.e[i]);ST.e[b]='tree';const e=G.edges[b],nw=T[e.u]?e.v:e.u;T[nw]=1;ST.n[nw]='vis';tot+=ew(e);snap(`Add cheapest edge ${e.u}-${e.v} (${ew(e)}). Total: ${tot}`)}snap(`MST weight: ${tot}`)},
+kru(){const p={};G.nodes.forEach(n=>p[n.id]=n.id);const f=x=>p[x]==x?x:p[x]=f(p[x]);let tot=0;const o=G.edges.map((e,i)=>i).sort((a,b)=>ew(G.edges[a])-ew(G.edges[b]));snap('Sort edges by weight');
+for(const i of o){const e=G.edges[i];ST.e[i]='cur';snap(`Consider ${e.u}-${e.v} (${ew(e)})`);if(f(e.u)!=f(e.v)){p[f(e.u)]=f(e.v);ST.e[i]='tree';ST.n[e.u]=ST.n[e.v]='vis';tot+=ew(e);snap(`Add ${e.u}-${e.v}. Total: ${tot}`)}else{ST.e[i]='bad';snap(`Skip ${e.u}-${e.v}: it would make a cycle`)}}snap(`MST weight: ${tot}`)},
+topo(){if(!G.dir)return snap('Topological sort needs a directed graph. Tick “Directed” or load the DAG example.');const A=adj(),ind={},q=[],o=[];G.nodes.forEach(n=>ind[n.id]=0);G.edges.forEach(e=>ind[e.v]++);G.nodes.forEach(n=>{if(!ind[n.id]){q.push(n.id);ST.n[n.id]='front'}});snap(`In-degree 0 vertices: [${q}]`);
+while(q.length){const u=q.shift();o.push(u);ST.n[u]='vis';ST.l[u]='#'+o.length;snap(`Output ${u}, remove its outgoing edges`);for(const{to,i}of A[u]){ST.e[i]='tree';if(--ind[to]==0){q.push(to);ST.n[to]='front'}}snap(`Queue: [${q}]`)}snap(o.length<G.nodes.length?'Cycle detected: no topological order exists.':`Order: ${o.join(' → ')}`)},
+bic(s){const A=adj(1),d={},lo={},art=new Set(),br=[];let t=0;const f=(u,pe)=>{d[u]=lo[u]=++t;ST.n[u]='cur';ST.l[u]=d[u]+'/'+lo[u];snap(`Discover ${u}: disc=${d[u]}, low=${lo[u]}`);let ch=0;for(const{to,i}of A[u]){if(i==pe)continue;if(d[to]){lo[u]=Math.min(lo[u],d[to]);ST.l[u]=d[u]+'/'+lo[u];snap(`Back edge ${u}-${to}: low(${u})=${lo[u]}`)}else{ch++;ST.e[i]='tree';f(to,i);lo[u]=Math.min(lo[u],lo[to]);ST.l[u]=d[u]+'/'+lo[u];if(lo[to]>d[u])br.push(i);if(pe!=-1&&lo[to]>=d[u])art.add(u);snap(`Back at ${u}: low=${lo[u]}`)}}if(pe==-1&&ch>1)art.add(u);ST.n[u]='vis'};f(s,-1);art.forEach(a=>ST.n[a]='art');br.forEach(i=>ST.e[i]='bad');snap(`Articulation points: ${[...art].join(', ')||'none'}. Bridges: ${br.map(i=>G.edges[i].u+G.edges[i].v).join(', ')||'none'}.`)},
+eul(s){const A=adj(1),od=G.nodes.filter(n=>A[n.id].length%2).map(n=>n.id);let st=od.length?od[0]:(A[s].length?s:(G.nodes.find(n=>A[n.id].length)||{}).id);if(!st)return snap('The graph has no edges.');const seen={[st]:1},q=[st];while(q.length)for(const{to}of A[q.pop()])if(!seen[to]){seen[to]=1;q.push(to)});
+if(G.nodes.some(n=>A[n.id].length&&!seen[n.id]))return snap('Not connected: no Euler circuit or path.');if(od.length>2)return snap(`${od.length} vertices have odd degree (${od}): no Euler circuit or path.`);
+snap(od.length?`Exactly two odd vertices: an Euler path from ${st} exists (no circuit).`:'Every degree is even: an Euler circuit exists.');const used={},stk=[{v:st,e:-1}],path=[];while(stk.length){const t=stk[stk.length-1],x=A[t.v].find(y=>!used[y.i]);if(x){used[x.i]=1;stk.push({v:x.to,e:x.i})}else path.push(stk.pop())}
+for(let k=0;k<path.length-1;k++){ST.e[path[k].e]='tree';ST.n[path[k].v]='vis';snap(`Step ${k+1}: ${path[k+1].v} → ${path[k].v}`)}snap(`Walk: ${path.map(p=>p.v).join(' → ')}`)}};
+const show=i=>{si=i;const s=steps[i];ST={n:{...s.n},e:{...s.e},l:{...s.l}};draw();const L=$('#log');L.innerHTML=steps.slice(0,i+1).map(x=>`<div>${x.m}</div>`).join('');L.scrollTop=1e5;$('#stp').textContent=`Step ${i+1} of ${steps.length}`};
+const tick=()=>{if(si>=steps.length-1)stop();else show(si+1)};
+function play(){if(tm)return stop();if(!steps.length)return;if(si>=steps.length-1)show(0);$('#play').textContent='❚❚';tm=setInterval(tick,1750-150*$('#sp').value)}
+$('#run').onclick=()=>{stop();if(!G.nodes.length)return $('#log').innerHTML='<div>Add some vertices and edges first.</div>';ST={n:{},e:{},l:{}};steps=[];ALG[$('#alg').value]($('#st').value);show(0);play()};
+$('#play').onclick=play;$('#next').onclick=()=>{stop();if(si<steps.length-1)show(si+1)};$('#prev').onclick=()=>{stop();if(si>0)show(si-1)};
+$('#sp').oninput=()=>{if(tm){stop();play()}};
+/* trees */
+let TK={b:[],p:[]},TM={b:4,p:4},tp='b',T=null,hl=null,hp=new Set(),ti=null;
+function ins(n,k,m,pl){const i=n.keys.filter(x=>x<=k).length;if(n.leaf){if(n.keys.includes(k))return;n.keys.splice(i,0,k);if(n.keys.length<m)return;const h=n.keys.length>>1;if(pl){const r={leaf:1,keys:n.keys.slice(h),kids:[]};n.keys=n.keys.slice(0,h);return{up:r.keys[0],r}}const r={leaf:1,keys:n.keys.slice(h+1),kids:[]},up=n.keys[h];n.keys=n.keys.slice(0,h);return{up,r}}
+if(!pl&&n.keys.includes(k))return;const s=ins(n.kids[i],k,m,pl);if(!s)return;n.keys.splice(i,0,s.up);n.kids.splice(i+1,0,s.r);if(n.keys.length<m)return;const h=n.keys.length>>1,r={leaf:0,keys:n.keys.slice(h+1),kids:n.kids.slice(h+1)},up=n.keys[h];n.keys=n.keys.slice(0,h);n.kids=n.kids.slice(0,h+1);return{up,r}}
+function build(){const m=TM[tp],pl=tp=='p';let root={leaf:1,keys:[],kids:[]};TK[tp].forEach(k=>{const s=ins(root,k,m,pl);if(s)root={leaf:0,keys:[s.up],kids:[root,s.r]}});T=root}
+function lay(n,d,o,C){n.nw=n.keys.length*28+12;n.y=d*84+24;C.d=Math.max(C.d,d);C.n.push(n);if(n.leaf){n.x=o;C.l.push(n);return n.nw}let x=o;n.kids.forEach((k,i)=>x+=lay(k,d+1,x,C)+(i<n.kids.length-1?16:0));const t=x-o;n.x=t>=n.nw?o+t/2-n.nw/2:o;return Math.max(t,n.nw)}
+function render(){const C={d:0,n:[],l:[]},w=lay(T,0,20,C),pl=tp=='p';let h='';C.n.forEach(n=>n.kids.forEach((k,i)=>h+=`<path class="tl" d="M${n.x+6+i*28} ${n.y+28}C${n.x+6+i*28} ${n.y+56} ${k.x+k.nw/2} ${k.y-26} ${k.x+k.nw/2} ${k.y}"/>`));
+if(pl)for(let i=0;i<C.l.length-1;i++)h+=`<line class="lk" x1="${C.l[i].x+C.l[i].nw}" y1="${C.l[i].y+14}" x2="${C.l[i+1].x}" y2="${C.l[i+1].y+14}"/>`;
+C.n.forEach(n=>{h+=`<rect class="tn ${hp.has(n)?'hp':''}" x="${n.x}" y="${n.y}" width="${n.nw}" height="28" rx="8"/>`;n.keys.forEach((k,i)=>h+=`<rect class="kc ${k===hl&&(n.leaf||!pl)?'hk':''}" x="${n.x+6+i*28}" y="${n.y+3}" width="28" height="22" rx="5"/><text class="kt ${pl&&!n.leaf?'ik':''}" x="${n.x+20+i*28}" y="${n.y+19}">${k}</text>`)});
+const sw=w+40,sh=C.d*84+80;const s=$('#ts');s.setAttribute('viewBox',`0 0 ${sw} ${sh}`);s.style.width=Math.max(sw,300)+'px';s.style.minHeight=sh+'px';s.innerHTML=h;
+$('#tst').textContent=`${TK[tp].length} keys · ${C.n.length} nodes · height ${C.d+1}`}
+const say=m=>$('#tm').textContent=m,nums=()=>$('#kv').value.split(/[\s,]+/).filter(Boolean).map(Number).filter(Number.isFinite);
+function refresh(){clearInterval(ti);hp=new Set();build();render()}
+$('#ti').onclick=()=>{const a=nums().filter(k=>!TK[tp].includes(k));if(!a.length)return say('Enter new numbers separated by commas. Existing keys are ignored.');TK[tp].push(...a);hl=a[a.length-1];refresh();say(`Inserted ${a.join(', ')}. Overfull nodes split and push a key up.`)};
+$('#td').onclick=()=>{const a=nums().filter(k=>TK[tp].includes(k));if(!a.length)return say('None of those keys are in the tree.');TK[tp]=TK[tp].filter(k=>!a.includes(k));hl=null;refresh();say(`Deleted ${a.join(', ')} and rebalanced the tree.`)};
+$('#tu').onclick=()=>{const o=+$('#uo').value,n=+$('#un').value,K=TK[tp];if($('#uo').value===''||$('#un').value==='')return say('Enter the old and new key.');if(!K.includes(o))return say(`${o} is not in the tree.`);if(K.includes(n))return say(`${n} already exists.`);K[K.indexOf(o)]=n;hl=n;refresh();say(`Updated ${o} to ${n}.`)};
+$('#tr').onclick=()=>{let c=0;while(c<8&&TK[tp].length<95){const k=1+Math.floor(Math.random()*99);if(!TK[tp].includes(k)){TK[tp].push(k);c++}}hl=null;refresh();say('Added 8 random keys.')};
+$('#tc').onclick=()=>{TK[tp]=[];hl=null;refresh();say('Tree cleared.')};
+$('#tsr').onclick=()=>{const k=nums()[0];if(k==null)return say('Enter a key to search for.');clearInterval(ti);hp=new Set();hl=null;const path=[];let n=T,f=false;for(;;){path.push(n);if(n.keys.includes(k)&&(tp=='b'||n.leaf)){f=true;break}if(n.leaf)break;n=n.kids[n.keys.filter(x=>x<=k).length]}
+let i=0;ti=setInterval(()=>{if(i<path.length){hp.add(path[i++]);render();say(`Visiting node [${path[i-1].keys.join(' ')}]`)}else{clearInterval(ti);if(f)hl=k;render();say(f?`Found ${k} after visiting ${path.length} node(s).`:`${k} is not in the tree (${path.length} node(s) visited).`)}},550)};
+$('#ord').onchange=e=>{TM[tp]=+e.target.value;refresh();say(`Order ${TM[tp]}: each node holds at most ${TM[tp]-1} keys.`)};
+const HOW={b:'Every node holds sorted keys and keys sit in internal nodes too. When a node gets more than order−1 keys, it splits and its middle key moves up to the parent.',p:'Internal nodes (grey keys) only guide the search. Every real key lives in a leaf, and leaves are chained by the dashed cyan links, which makes range scans fast.'};
+$('#nav').onclick=ev=>{const t=ev.target.dataset.t;if(!t)return;document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b==ev.target));$('#g').hidden=t!='g';$('#t').hidden=t=='g';if(t!='g'){tp=t;$('#tt').textContent=t=='b'?'B-Tree':'B+ Tree';$('#ord').value=TM[t];$('#how').textContent=HOW[t];hl=null;refresh();say(TK[t].length?'Viewing current tree.':'Insert some keys to begin.')}};
+document.querySelector('[data-s=w]').click();
+</script></body></html>
